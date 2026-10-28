@@ -249,7 +249,11 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
                     .build(),
             )
 
-            crossfade((300 * this@App.animatorDurationScale).toInt())
+            // Сетки обложек впихивают десятки вновь появляющихся изображений за кадр.
+            // На low-RAM девайсах crossfade на них — чистый проигрыш в кадрах.
+            if (!DeviceUtil.isLowRamDevice(this@App)) {
+                crossfade((150 * this@App.animatorDurationScale).toInt())
+            }
             allowRgb565(DeviceUtil.isLowRamDevice(this@App))
             if (networkPreferences.verboseLogging.get()) logger(DebugLogger())
 

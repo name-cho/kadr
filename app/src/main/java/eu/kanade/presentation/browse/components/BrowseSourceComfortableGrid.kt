@@ -1,4 +1,4 @@
-package eu.kanade.presentation.browse.components
+﻿package eu.kanade.presentation.browse.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,7 +38,7 @@ fun BrowseSourceComfortableGrid(
             }
         }
 
-        items(count = mangaList.itemCount) { index ->
+        items(count = mangaList.itemCount, key = { index -> mangaList[index]?.value?.id ?: index }) { index ->
             val manga by mangaList[index]?.collectAsState() ?: return@items
             BrowseSourceComfortableGridItem(
                 manga = manga,

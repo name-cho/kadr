@@ -122,6 +122,16 @@ fun MangaCompactGridItem(
 /**
  * Title overlay for [MangaCompactGridItem]
  */
+private val CoverScrimBrush = Brush.verticalGradient(
+    0f to Color.Transparent,
+    1f to Color(0xAA000000),
+)
+
+private val CoverTitleShadow = Shadow(
+    color = Color.Black,
+    blurRadius = 4f,
+)
+
 @Composable
 private fun BoxScope.CoverTextOverlay(
     title: String,
@@ -130,12 +140,7 @@ private fun BoxScope.CoverTextOverlay(
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
-            .background(
-                Brush.verticalGradient(
-                    0f to Color.Transparent,
-                    1f to Color(0xAA000000),
-                ),
-            )
+            .background(CoverScrimBrush)
             .fillMaxHeight(0.33f)
             .fillMaxWidth()
             .align(Alignment.BottomCenter),
@@ -151,10 +156,7 @@ private fun BoxScope.CoverTextOverlay(
             title = title,
             style = MaterialTheme.typography.titleSmall.copy(
                 color = Color.White,
-                shadow = Shadow(
-                    color = Color.Black,
-                    blurRadius = 4f,
-                ),
+                shadow = CoverTitleShadow,
             ),
             minLines = 1,
         )

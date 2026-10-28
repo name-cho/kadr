@@ -1,74 +1,72 @@
 <div align="center">
 
-<a href="https://mihon.app">
-    <img src="./.github/assets/logo.png" alt="Mihon logo" title="Mihon logo" width="80"/>
-</a>
+# Kadr
 
-# Mihon [App](#)
+### Material 3 Expressive fork of Mihon
 
-### Full-featured reader
-Discover and read manga, webtoons, comics, and more – easier than ever on your Android device.
-
-[![Discord server](https://img.shields.io/discord/1195734228319617024.svg?label=&labelColor=6A7EC2&color=7389D8&logo=discord&logoColor=FFFFFF)](https://discord.gg/mihon)
-[![GitHub downloads](https://img.shields.io/github/downloads/mihonapp/mihon/total?label=downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://mihon.app/download)
-
-[![CI](https://img.shields.io/github/actions/workflow/status/mihonapp/mihon/build.yml?labelColor=27303D)](https://github.com/mihonapp/mihon/actions/workflows/build_push.yml)
-[![License: Apache-2.0](https://img.shields.io/github/license/mihonapp/mihon?labelColor=27303D&color=0877d2)](/LICENSE)
-[![Translation status](https://img.shields.io/weblate/progress/mihon?labelColor=27303D&color=946300)](https://hosted.weblate.org/engage/mihon/)
-
-## Download
-
-[![Mihon Stable](https://img.shields.io/github/release/mihonapp/mihon.svg?maxAge=3600&label=Stable&labelColor=06599d&color=043b69)](https://mihon.app/download)
-[![Mihon Beta](https://img.shields.io/github/v/release/mihonapp/mihon-preview.svg?maxAge=3600&label=Beta&labelColor=2c2c47&color=1c1c39)](https://mihon.app/download)
-
-*Requires Android 8.0 or higher.*
-
-## Features
-
-<div align="left">
-
-* Local reading of content.
-* A configurable reader with multiple viewers, reading directions and other settings.
-* Tracker support: [MangaBaka](https://mangabaka.org), [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/), [Kitsu](https://kitsu.app/), [MangaUpdates](https://mangaupdates.com), [Shikimori](https://shikimori.one), [Bangumi](https://bgm.tv/), and [Hikka](https://hikka.io/) support.
-* Categories to organize your library.
-* Light and dark themes.
-* Schedule updating your library for new chapters.
-* Create backups locally to read offline or to your desired cloud service.
-* Plus much more...
+A full-featured manga, webtoon and comic reader for Android, forked from
+[Mihon](https://github.com/mihonapp/mihon) and restyled with Material 3
+Expressive — dynamic theming, floating navigation bar, expressive backdrop
+shapes and a redesigned settings screen.
 
 </div>
 
-## Contributing
+## What differs from Mihon
 
-[Code of conduct](./CODE_OF_CONDUCT.md) · [Contributing guide](./CONTRIBUTING.md)
+This fork is a UI/UX restyle, not a new feature set. Most changes live in the
+presentation layer:
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+- **Material 3 Expressive theme** — expressive color scheme, updated
+  typography and shapes (`app/src/main/java/eu/kanade/presentation/theme`).
+- **Floating navigation bar** — a pill-shaped bar with an animated indicator
+  on the active tab only, instead of a static bottom bar
+  (`ExpressiveNavigationBar.kt`).
+- **Redesigned settings** — preference rows are rendered as separate rounded
+  chips with real gaps instead of one flat list with dividers
+  (`presentation/more/settings/widget`).
+- **Hero backdrop shapes** — decorative shapes drawn behind the header of the
+  "More" screen via `drawWithCache` (computed once per size, no per-frame
+  cost).
+- **Predictive back** — gesture-driven back animation using
+  `androidx.navigationevent`, reads animated values in the draw phase so a
+  gesture never recomposes the screen.
+- **Rebranded to Kadr** — application id `app.kadr`, new adaptive launcher
+  icon, notifications and splash use the Kadr "K" mark.
 
-Before reporting a new issue, take a look at the [FAQ](https://mihon.app/docs/faq/general), the [changelog](https://mihon.app/changelogs/) and the already opened [issues](https://github.com/mihonapp/mihon/issues); if you got any questions, join our [Discord server](https://discord.gg/mihon).
+The reader, library, sources and all back-end logic are upstream Mihon code.
 
+## Building
 
-### Repositories
+Requires JDK 17+ and the Android SDK. Set `JAVA_HOME` to a JDK (on Windows,
+Android Studio's bundled JBR works) and:
 
-[![mihonapp/website - GitHub](https://github-stats-extended.vercel.app/api/pin/?username=mihonapp&repo=website&bg_color=161B22&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true&description_lines_count=2)](https://github.com/mihonapp/website/)
-[![mihonapp/bitmap.kt - GitHub](https://github-stats-extended.vercel.app/api/pin/?username=mihonapp&repo=bitmap.kt&bg_color=161B22&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true&description_lines_count=2)](https://github.com/mihonapp/bitmap.kt/)
+```bash
+# Debug
+./gradlew :app:assembleDebug
 
-### Credits
+# Release (minified, resources shrunk)
+./gradlew :app:assembleRelease
+```
 
-Thank you to all the people who have contributed!
+The debug build id is `app.kadr.dev`, release is `app.kadr`.
+A debug keystore is configured through `keystore.properties` at the project
+root (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`) — see
+`app/build.gradle.kts`.
 
-<a href="https://github.com/mihonapp/mihon/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=mihonapp/mihon" alt="Mihon app contributors" title="Mihon app contributors" width="800"/>
-</a>
+## Performance notes
 
-### Disclaimer
+The project ships baseline profiles
+(`app/src/main/baselineProfiles`), R8 minification for release builds, and a
+Coil memory cache sized to the device. Grids and lists use stable keys and
+`@Immutable` models where applicable; large image grids disable crossfade to
+keep scrolling smooth on low-end devices.
 
-The developer(s) of this application does not have any affiliation with the content providers available, and this application hosts zero content.
-
-### License
+## License
 
 <pre>
 Copyright © 2015 Javier Tomás
 Copyright © 2024 Mihon Open Source Project
+Copyright © 2026 Kadr
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -82,5 +80,3 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 </pre>
-
-</div>
