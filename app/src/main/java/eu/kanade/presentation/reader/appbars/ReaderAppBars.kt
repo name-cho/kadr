@@ -10,7 +10,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,8 +22,8 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -75,9 +74,7 @@ fun ReaderAppBars(
     onClickCropBorder: () -> Unit,
     onClickSettings: () -> Unit,
 ) {
-    val backgroundColor = MaterialTheme.colorScheme
-        .surfaceColorAtElevation(3.dp)
-        .copy(alpha = if (isSystemInDarkTheme()) 0.9f else 0.95f)
+    val backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.96f)
 
     Column(modifier = Modifier.fillMaxHeight()) {
         AnimatedVisibility(
@@ -87,7 +84,10 @@ fun ReaderAppBars(
         ) {
             ReaderTopBar(
                 modifier = Modifier
-                    .background(backgroundColor)
+                    .background(
+                        color = backgroundColor,
+                        shape = RoundedCornerShape(bottomStart = 32.dp, bottomEnd = 32.dp),
+                    )
                     .clickable(onClick = onClickTopAppBar),
                 mangaTitle = mangaTitle,
                 chapterTitle = chapterTitle,
@@ -163,7 +163,10 @@ fun ReaderAppBars(
                 ReaderBottomBar(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(backgroundColor)
+                        .background(
+                            color = backgroundColor,
+                            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                        )
                         .padding(horizontal = MaterialTheme.padding.small)
                         .windowInsetsPadding(WindowInsets.navigationBars),
                     readingMode = readingMode,

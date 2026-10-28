@@ -278,7 +278,8 @@ private fun ReorderableCollectionItemScope.DownloadQueueHeader(
     onDragStopped: () -> Unit,
 ) {
     Surface(
-        modifier = Modifier.padding(top = MaterialTheme.padding.small),
+        modifier = Modifier.padding(horizontal = MaterialTheme.padding.medium, vertical = 3.dp),
+        shape = MaterialTheme.shapes.large,
         color = listItemContainerColor(isDragging),
         shadowElevation = listItemElevation(isDragging),
     ) {
@@ -313,7 +314,8 @@ private fun ReorderableCollectionItemScope.DownloadQueueItem(
     val animatedProgress by animateFloatAsState(progress?.fraction ?: 0f, label = "progress")
 
     Surface(
-        modifier = modifier,
+        modifier = modifier.padding(horizontal = MaterialTheme.padding.medium, vertical = 3.dp),
+        shape = MaterialTheme.shapes.large,
         color = listItemContainerColor(isDragging),
         shadowElevation = listItemElevation(isDragging),
     ) {
@@ -458,7 +460,11 @@ private fun DownloadQueueItemMenu(
 // A neutral lifted surface while dragged, rather than Material's tertiaryContainer list tint
 @Composable
 private fun listItemContainerColor(isDragging: Boolean): Color {
-    return if (isDragging) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.background
+    return if (isDragging) {
+        MaterialTheme.colorScheme.surfaceContainerHigh
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerLow
+    }
 }
 
 @Composable

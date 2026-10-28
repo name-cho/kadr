@@ -21,9 +21,9 @@ fun PreferenceGroupHeader(title: String, highlighted: Boolean = false) {
     ) {
         Text(
             text = title,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.padding(horizontal = PrefsHorizontalPadding),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.labelLarge,
         )
     }
 }

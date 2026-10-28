@@ -1,5 +1,6 @@
 package eu.kanade.presentation.updates
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,10 +24,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.components.relativeDateText
@@ -66,11 +67,15 @@ internal fun UpdatesLastUpdatedHeader(
 ) {
     Box(
         modifier = modifier
-            .padding(horizontal = MaterialTheme.padding.medium, vertical = MaterialTheme.padding.small),
+            .padding(horizontal = MaterialTheme.padding.medium, vertical = MaterialTheme.padding.small)
+            .clip(MaterialTheme.shapes.extraLarge)
+            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .padding(horizontal = MaterialTheme.padding.medium, vertical = 6.dp),
     ) {
         Text(
             text = stringResource(MR.strings.updates_last_update_info, relativeTimeSpanString(lastUpdated)),
-            fontStyle = FontStyle.Italic,
+            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }
@@ -159,6 +164,9 @@ private fun UpdatesUiItem(
 
     Row(
         modifier = modifier
+            .padding(horizontal = MaterialTheme.padding.medium, vertical = 3.dp)
+            .clip(MaterialTheme.shapes.large)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .selectedBackground(selected)
             .combinedClickable(
                 onClick = onClick,
@@ -167,13 +175,13 @@ private fun UpdatesUiItem(
                     haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                 },
             )
-            .height(56.dp)
-            .padding(horizontal = MaterialTheme.padding.medium),
+            .height(76.dp)
+            .padding(horizontal = MaterialTheme.padding.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         MangaCover.Square(
             modifier = Modifier
-                .padding(vertical = 6.dp)
+                .padding(vertical = 8.dp)
                 .fillMaxHeight(),
             data = update.coverData,
             onClick = onClickCover,
@@ -187,7 +195,7 @@ private fun UpdatesUiItem(
             Text(
                 text = update.mangaTitle,
                 maxLines = 1,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.titleSmall,
                 color = LocalContentColor.current.copy(alpha = textAlpha),
                 overflow = TextOverflow.Ellipsis,
             )

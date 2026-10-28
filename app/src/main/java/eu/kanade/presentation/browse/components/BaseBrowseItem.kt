@@ -1,5 +1,6 @@
 package eu.kanade.presentation.browse.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -8,7 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import tachiyomi.presentation.core.components.material.padding
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun BaseBrowseItem(
@@ -19,13 +21,18 @@ fun BaseBrowseItem(
     action: @Composable RowScope.() -> Unit = {},
     content: @Composable RowScope.() -> Unit = {},
 ) {
+    // Each browse row is its own tonal island so lists read as a stack of cards
+    // instead of a flat, divider-heavy table.
     Row(
         modifier = modifier
+            .padding(horizontal = 12.dp, vertical = 3.dp)
+            .clip(MaterialTheme.shapes.large)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .combinedClickable(
                 onClick = onClickItem,
                 onLongClick = onLongClickItem,
             )
-            .padding(horizontal = MaterialTheme.padding.medium, vertical = MaterialTheme.padding.small),
+            .padding(start = 12.dp, top = 8.dp, end = 4.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         icon()

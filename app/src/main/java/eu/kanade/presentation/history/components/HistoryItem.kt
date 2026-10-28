@@ -1,5 +1,6 @@
 package eu.kanade.presentation.history.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.PreviewLightDark
@@ -48,9 +50,12 @@ fun HistoryItem(
 ) {
     Row(
         modifier = modifier
+            .padding(horizontal = MaterialTheme.padding.medium, vertical = 3.dp)
+            .clip(MaterialTheme.shapes.large)
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .clickable(onClick = onClickResume)
             .height(HistoryItemHeight)
-            .padding(horizontal = MaterialTheme.padding.medium, vertical = MaterialTheme.padding.small),
+            .padding(horizontal = MaterialTheme.padding.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         MangaCover.Book(
@@ -69,7 +74,7 @@ fun HistoryItem(
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                style = textStyle,
+                style = MaterialTheme.typography.titleSmall,
             )
             val readAt = remember(timeFormatter, history.readAt) {
                 history.readAt?.toTimestampString(timeFormatter) ?: ""

@@ -41,7 +41,7 @@ fun BaseSourceItem(
 }
 
 private val defaultIcon: @Composable RowScope.(Source) -> Unit = { source ->
-    SourceIcon(source = source, modifier = Modifier.size(48.dp))
+    SourceIcon(source = source, modifier = Modifier.size(44.dp))
 }
 
 private val defaultContent: @Composable RowScope.(Source, String?) -> Unit = { source, sourceLangString ->
@@ -54,7 +54,7 @@ private val defaultContent: @Composable RowScope.(Source, String?) -> Unit = { s
             text = source.name,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.titleSmall,
         )
         if (sourceLangString != null) {
             Text(

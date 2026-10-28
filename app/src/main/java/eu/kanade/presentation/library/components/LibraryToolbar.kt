@@ -1,6 +1,5 @@
 package eu.kanade.presentation.library.components
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -11,7 +10,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.sp
 import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.components.SearchToolbar
@@ -71,7 +69,6 @@ private fun LibraryRegularToolbar(
     onClickOpenRandomManga: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior?,
 ) {
-    val pillAlpha = if (isSystemInDarkTheme()) 0.12f else 0.08f
     SearchToolbar(
         titleContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -80,12 +77,14 @@ private fun LibraryRegularToolbar(
                     maxLines = 1,
                     modifier = Modifier.weight(1f, false),
                     overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.headlineSmall,
                 )
                 if (title.numberOfManga != null) {
                     Pill(
                         text = "${title.numberOfManga}",
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = pillAlpha),
-                        fontSize = 14.sp,
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        style = MaterialTheme.typography.labelLarge,
                     )
                 }
             }
@@ -129,7 +128,12 @@ private fun LibrarySelectionToolbar(
     onClickInvertSelection: () -> Unit,
 ) {
     AppBar(
-        titleContent = { Text(text = "$selectedCount") },
+        titleContent = {
+            Text(
+                text = "$selectedCount",
+                style = MaterialTheme.typography.headlineSmall,
+            )
+        },
         actions = {
             AppBarActions(
                 listOf(

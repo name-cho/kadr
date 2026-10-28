@@ -1,8 +1,11 @@
 package eu.kanade.presentation.more
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.more.settings.widget.SwitchPreferenceWidget
@@ -27,6 +30,16 @@ import tachiyomi.presentation.core.i18n.pluralStringResource
 import tachiyomi.presentation.core.i18n.stringResource
 
 @Composable
+private fun MoreSectionHeader(title: String) {
+    Text(
+        text = title,
+        modifier = Modifier.padding(start = 28.dp, end = 28.dp, top = 20.dp, bottom = 6.dp),
+        color = MaterialTheme.colorScheme.primary,
+        style = MaterialTheme.typography.labelLarge,
+    )
+}
+
+@Composable
 fun MoreScreen(
     downloadQueueStateProvider: () -> DownloadQueueState,
     downloadedOnly: Boolean,
@@ -47,8 +60,11 @@ fun MoreScreen(
         ScrollbarLazyColumn(contentPadding = contentPadding) {
             item {
                 LogoHeader(
-                    iconPadding = PaddingValues(vertical = 32.dp),
+                    iconPadding = PaddingValues(vertical = 8.dp),
                 )
+            }
+            item {
+                MoreSectionHeader(title = stringResource(MR.strings.pref_category_general))
             }
             item {
                 SwitchPreferenceWidget(
@@ -69,7 +85,7 @@ fun MoreScreen(
                 )
             }
 
-            item { HorizontalDivider() }
+            item { MoreSectionHeader(title = stringResource(MR.strings.label_library)) }
 
             item {
                 val downloadQueueState = downloadQueueStateProvider()
@@ -122,7 +138,7 @@ fun MoreScreen(
                 )
             }
 
-            item { HorizontalDivider() }
+            item { MoreSectionHeader(title = stringResource(MR.strings.pref_category_about)) }
 
             item {
                 TextPreferenceWidget(

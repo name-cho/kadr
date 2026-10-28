@@ -8,7 +8,7 @@ import androidx.compose.ui.text.font.FontWeight
 
 val Typography.header: TextStyle
     @Composable
-    get() = bodyMedium.copy(
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    get() = titleSmall.copy(
+        color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.SemiBold,
     )

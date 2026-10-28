@@ -100,8 +100,9 @@ import org.intellij.markdown.MarkdownTokenTypes
 import org.intellij.markdown.ast.findChildOfType
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.i18n.MR
+import tachiyomi.presentation.core.components.material.Button
+import tachiyomi.presentation.core.components.material.ButtonDefaults
 import tachiyomi.presentation.core.components.material.DISABLED_ALPHA
-import tachiyomi.presentation.core.components.material.TextButton
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.pluralStringResource
 import tachiyomi.presentation.core.i18n.stringResource
@@ -186,7 +187,7 @@ fun MangaActionRow(
     onEditCategory: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
-    val defaultActionButtonColor = MaterialTheme.colorScheme.onSurface.copy(alpha = DISABLED_ALPHA)
+    val defaultActionButtonColor = MaterialTheme.colorScheme.onSurfaceVariant
 
     // TODO: show something better when using custom interval
     val nextUpdateDays = remember(nextUpdate) {
@@ -198,7 +199,10 @@ fun MangaActionRow(
         }
     }
 
-    Row(modifier = modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
+    Row(
+        modifier = modifier.padding(start = 12.dp, top = 12.dp, end = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
         MangaActionButton(
             title = if (favorite) {
                 stringResource(MR.strings.in_library)
@@ -206,7 +210,12 @@ fun MangaActionRow(
                 stringResource(MR.strings.add_to_library)
             },
             icon = if (favorite) MaterialSymbols.RoundedFilled.Favorite else MaterialSymbols.Rounded.Favorite,
-            color = if (favorite) MaterialTheme.colorScheme.primary else defaultActionButtonColor,
+            color = if (favorite) MaterialTheme.colorScheme.onPrimaryContainer else defaultActionButtonColor,
+            containerColor = if (favorite) {
+                MaterialTheme.colorScheme.primaryContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerHigh
+            },
             onClick = onAddToLibraryClicked,
             onLongClick = onEditCategory,
         )
@@ -398,13 +407,14 @@ private fun MangaAndSourceTitlesSmall(
     ) {
         MangaCover.Book(
             modifier = Modifier
-                .sizeIn(maxWidth = 100.dp)
+                .sizeIn(maxWidth = 112.dp)
                 .align(Alignment.Top),
             data = ImageRequest.Builder(LocalContext.current)
                 .data(manga)
                 .crossfade(true)
                 .build(),
             contentDescription = stringResource(MR.strings.manga_cover),
+            shape = MaterialTheme.shapes.large,
             onClick = onCoverClick,
         )
         Column(
@@ -437,7 +447,7 @@ private fun ColumnScope.MangaContentInfo(
     val context = LocalContext.current
     Text(
         text = title.ifBlank { stringResource(MR.strings.unknown_title) },
-        style = MaterialTheme.typography.titleLarge,
+        style = MaterialTheme.typography.headlineSmall,
         modifier = Modifier.clickableNoIndication(
             onLongClick = {
                 if (title.isNotBlank()) {
@@ -723,27 +733,36 @@ private fun RowScope.MangaActionButton(
     title: String,
     icon: ImageVector,
     color: Color,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     onClick: () -> Unit,
     onLongClick: (() -> Unit)? = null,
 ) {
-    TextButton(
+    Button(
         onClick = onClick,
         modifier = Modifier.weight(1f),
         onLongClick = onLongClick,
+        shape = MaterialTheme.shapes.medium,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = color,
+        ),
+        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 10.dp),
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
                 imageVector = icon,
                 contentDescription = null,
                 tint = color,
-                modifier = Modifier.size(20.dp),
+                modifier = Modifier.size(22.dp),
             )
             Spacer(Modifier.height(4.dp))
             Text(
                 text = title,
                 color = color,
-                fontSize = 12.sp,
+                style = MaterialTheme.typography.labelSmall,
                 textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }

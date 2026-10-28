@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -91,12 +92,14 @@ fun MangaChapterListItem(
     ) {
         Row(
             modifier = modifier
+                .padding(horizontal = 8.dp)
+                .clip(MaterialTheme.shapes.large)
                 .selectedBackground(selected)
                 .combinedClickable(
                     onClick = onClick,
                     onLongClick = onLongClick,
                 )
-                .padding(start = 16.dp, top = 12.dp, end = 8.dp, bottom = 12.dp),
+                .padding(start = 12.dp, top = 12.dp, end = 8.dp, bottom = 12.dp),
         ) {
             Column(
                 modifier = Modifier.weight(1f),
@@ -128,7 +131,7 @@ fun MangaChapterListItem(
                     }
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyLarge,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         onTextLayout = { textHeight = it.size.height },

@@ -1,12 +1,17 @@
 package tachiyomi.presentation.core.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.paddingFromBaseline
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,6 +20,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
@@ -63,26 +69,35 @@ fun EmptyScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-            Text(
-                text = face,
-                modifier = Modifier.secondaryItemAlpha(),
-                style = MaterialTheme.typography.displayMedium,
-            )
+            Box(
+                modifier = Modifier
+                    .size(132.dp)
+                    .clip(RoundedCornerShape(44.dp))
+                    .background(MaterialTheme.colorScheme.primaryContainer),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = face,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    style = MaterialTheme.typography.displaySmall,
+                )
+            }
         }
 
         Text(
             text = message,
             modifier = Modifier
-                .paddingFromBaseline(top = 24.dp)
-                .secondaryItemAlpha(),
-            style = MaterialTheme.typography.bodyMedium,
+                .paddingFromBaseline(top = 24.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
         )
 
         if (!actions.isNullOrEmpty()) {
             Row(
                 modifier = Modifier
-                    .padding(top = 24.dp),
+                    .padding(top = 24.dp)
+                    .widthIn(max = 420.dp),
                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
             ) {
                 actions.fastForEach {

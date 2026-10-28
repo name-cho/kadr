@@ -65,6 +65,8 @@ private fun BaseTachiyomiTheme(
                 isAmoled = isAmoled,
             )
         },
+        shapes = ExpressiveShapes,
+        typography = ExpressiveTypography,
         content = content,
     )
 }

@@ -2,8 +2,15 @@ package eu.kanade.tachiyomi.ui.home
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -12,15 +19,17 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteDefaul
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteItem
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
-import androidx.compose.material3.adaptive.navigationsuite.rememberNavigationSuiteScaffoldState
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -31,6 +40,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import eu.kanade.presentation.components.ExpressiveNavigationBar
 import eu.kanade.presentation.util.Screen
 import eu.kanade.presentation.util.isTabletUi
 import eu.kanade.tachiyomi.ui.browse.BrowseTab
@@ -46,8 +56,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import mihon.app.di.appGraph
-import soup.compose.material.motion.animation.materialFadeThroughIn
-import soup.compose.material.motion.animation.materialFadeThroughOut
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.i18n.pluralStringResource
 
@@ -81,48 +89,57 @@ object HomeScreen : Screen() {
             // Provide usable navigator to content screen
             CompositionLocalProvider(LocalNavigator provides navigator) {
                 val tabletUi = isTabletUi()
-                val navigationSuiteType = if (tabletUi) {
-                    NavigationSuiteType.NavigationRail
-                } else {
-                    NavigationSuiteType.NavigationBar
-                }
-                val navigationSuiteState = rememberNavigationSuiteScaffoldState()
-                LaunchedEffect(navigationSuiteState, tabletUi) {
-                    if (tabletUi) navigationSuiteState.show()
+                var showBottomNav by remember { mutableStateOf(true) }
+                val tabScope = rememberCoroutineScope()
+
+                LaunchedEffect(tabletUi) {
+                    if (tabletUi) {
+                        showBottomNav = true
+                        return@LaunchedEffect
+                    }
                     showBottomNavEvent.receiveAsFlow().collectLatest { show ->
-                        if (tabletUi || show) {
-                            navigationSuiteState.show()
-                        } else {
-                            navigationSuiteState.hide()
-                        }
+                        showBottomNav = show
                     }
                 }
 
-                NavigationSuiteScaffold(
-                    navigationSuiteType = navigationSuiteType,
-                    state = navigationSuiteState,
-                    navigationSuiteColors = NavigationSuiteDefaults.colors(
-                        navigationRailContainerColor = MaterialTheme.colorScheme
-                            .surfaceColorAtElevation(3.dp),
-                    ),
-                    navigationItemVerticalArrangement = Arrangement.Center,
-                    navigationItems = {
-                        TABS.fastForEach { NavigationSuiteItem(it, navigationSuiteType) }
-                    },
-                ) {
-                    AnimatedContent(
-                        targetState = tabNavigator.current,
-                        transitionSpec = {
-                            materialFadeThroughIn(
-                                initialScale = 1f,
-                                durationMillis = TabFadeDuration,
-                            ) togetherWith materialFadeThroughOut(durationMillis = TabFadeDuration)
+                if (tabletUi) {
+                    NavigationSuiteScaffold(
+                        navigationSuiteType = NavigationSuiteType.NavigationRail,
+                        navigationSuiteColors = NavigationSuiteDefaults.colors(
+                            navigationRailContainerColor = MaterialTheme.colorScheme
+                                .surfaceContainerLow,
+                        ),
+                        navigationItemVerticalArrangement = Arrangement.Center,
+                        navigationItems = {
+                            TABS.fastForEach { NavigationSuiteItem(it, NavigationSuiteType.NavigationRail) }
                         },
-                        label = "tabContent",
                     ) {
-                        tabNavigator.saveableState(key = "currentTab", it) {
-                            it.Content()
-                        }
+                        TabContent(tabNavigator)
+                    }
+                } else {
+                    androidx.compose.material3.Scaffold(
+                        containerColor = Color.Transparent,
+                        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+                        bottomBar = {
+                            ExpressiveNavigationBar(
+                                tabs = TABS,
+                                selectedTab = tabNavigator.current as eu.kanade.presentation.util.Tab,
+                                visible = showBottomNav,
+                                onSelect = { tab ->
+                                    if (tabNavigator.current::class != tab::class) {
+                                        tabNavigator.current = tab
+                                    } else {
+                                        tabScope.launch { tab.onReselect(navigator) }
+                                    }
+                                },
+                                badge = { tab -> tabBadge(tab)?.invoke() },
+                            )
+                        },
+                    ) { contentPadding ->
+                        TabContent(
+                            tabNavigator = tabNavigator,
+                            modifier = Modifier.padding(bottom = contentPadding.calculateBottomPadding()),
+                        )
                     }
                 }
             }
@@ -161,6 +178,33 @@ object HomeScreen : Screen() {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @Composable
+    private fun TabContent(
+        tabNavigator: TabNavigator,
+        modifier: Modifier = Modifier,
+    ) {
+        AnimatedContent(
+            targetState = tabNavigator.current,
+            modifier = modifier,
+            transitionSpec = {
+                // Expressive top-level transition: the incoming page rises and settles on a
+                // spatial spring while the outgoing page fades on an effects curve.
+                (
+                    fadeIn(animationSpec = tween(durationMillis = 220)) +
+                        scaleIn(
+                            initialScale = 0.94f,
+                            animationSpec = spring(dampingRatio = 0.72f, stiffness = 380f),
+                        )
+                    ) togetherWith fadeOut(animationSpec = tween(durationMillis = 140))
+            },
+            label = "tabContent",
+        ) {
+            tabNavigator.saveableState(key = "currentTab", it) {
+                it.Content()
             }
         }
     }
