@@ -3,6 +3,9 @@
 .kotlin
 build
 
+# Local build logs
+build_*.log
+
 # IDE files
 *.iml
 .idea/*

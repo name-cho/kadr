@@ -1,7 +1,9 @@
-package eu.kanade.presentation.more.settings.screen
+﻿package eu.kanade.presentation.more.settings.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -120,37 +122,39 @@ object SettingsMainScreen : Screen() {
                 LazyColumn(
                     state = state,
                     contentPadding = contentPadding,
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     itemsIndexed(
                         items = items,
                         key = { _, item -> item.hashCode() },
+                        contentType = { _, _ -> "settingsItem" },
                     ) { index, item ->
                         val selected = indexSelected == index
-                        var modifier: Modifier = Modifier
-                        var contentColor = LocalContentColor.current
-                        if (twoPane) {
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                                .clip(RoundedCornerShape(24.dp))
-                                .then(
-                                    if (selected) {
-                                        Modifier.background(MaterialTheme.colorScheme.surfaceVariant)
-                                    } else {
-                                        Modifier
-                                    },
-                                )
-                            if (selected) {
-                                contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                            }
+                        val contentColor = if (twoPane && selected) {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        } else {
+                            LocalContentColor.current
                         }
-                        CompositionLocalProvider(LocalContentColor provides contentColor) {
-                            TextPreferenceWidget(
-                                modifier = modifier,
-                                title = stringResource(item.titleRes),
-                                subtitle = item.formatSubtitle(),
-                                icon = item.icon,
-                                onPreferenceClick = { navigator.navigate(item.screen, twoPane) },
-                            )
+                        val cardColor = if (twoPane && selected) {
+                            MaterialTheme.colorScheme.surfaceVariant
+                        } else {
+                            MaterialTheme.colorScheme.surfaceContainerHigh
+                        }
+
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp)
+                                .clip(RoundedCornerShape(24.dp))
+                                .background(cardColor),
+                        ) {
+                            CompositionLocalProvider(LocalContentColor provides contentColor) {
+                                TextPreferenceWidget(
+                                    title = stringResource(item.titleRes),
+                                    subtitle = item.formatSubtitle(),
+                                    icon = item.icon,
+                                    onPreferenceClick = { navigator.navigate(item.screen, twoPane) },
+                                )
+                            }
                         }
                     }
                 }

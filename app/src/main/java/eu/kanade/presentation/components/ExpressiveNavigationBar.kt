@@ -32,14 +32,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
@@ -49,13 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import eu.kanade.presentation.util.Tab
 
-/**
- * Floating, flexible navigation bar for compact windows.
- *
- * The bar is a tonal island instead of an edge-to-edge strip: `surface container high` on
- * `surface`, a 32dp container radius that is one step larger than the 24dp item radius,
- * and a 56x32 active indicator that springs out from the icon center.
- */
 @Composable
 fun ExpressiveNavigationBar(
     tabs: List<Tab>,
@@ -98,8 +92,6 @@ fun ExpressiveNavigationBar(
                         selected = selectedTab::class == tab::class,
                         onClick = { onSelect(tab) },
                         badge = { badge(tab) },
-                        index = index,
-                        count = tabs.size,
                     )
                 }
             }
@@ -113,8 +105,6 @@ private fun RowScope.ExpressiveNavigationItem(
     selected: Boolean,
     onClick: () -> Unit,
     badge: @Composable () -> Unit,
-    index: Int,
-    count: Int,
 ) {
     val haptic = LocalHapticFeedback.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -126,10 +116,10 @@ private fun RowScope.ExpressiveNavigationItem(
         animationSpec = spring(dampingRatio = 0.55f, stiffness = 900f),
         label = "navItemScale",
     )
-    val indicatorWidth by animateFloatAsState(
+    val indicatorProgress by animateFloatAsState(
         targetValue = if (selected) 1f else 0f,
         animationSpec = spring(dampingRatio = 0.62f, stiffness = 500f),
-        label = "navIndicatorWidth",
+        label = "navIndicator",
     )
     val iconScale by animateFloatAsState(
         targetValue = if (selected) 1.06f else 1f,
@@ -137,11 +127,26 @@ private fun RowScope.ExpressiveNavigationItem(
         label = "navIconScale",
     )
 
+    val indicatorColor = MaterialTheme.colorScheme.secondaryContainer
+    val iconTint = if (selected) {
+        MaterialTheme.colorScheme.onSecondaryContainer
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
+    val labelColor = if (selected) {
+        MaterialTheme.colorScheme.secondary
+    } else {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    }
+
     Column(
         modifier = Modifier
             .weight(1f)
             .height(60.dp)
-            .scale(itemScale)
+            .graphicsLayer {
+                scaleX = itemScale
+                scaleY = itemScale
+            }
             .clip(RoundedCornerShape(24.dp))
             .selectable(
                 selected = selected,
@@ -158,28 +163,33 @@ private fun RowScope.ExpressiveNavigationItem(
         verticalArrangement = Arrangement.Center,
     ) {
         Box(
-            modifier = Modifier.height(32.dp).width(56.dp),
+            modifier = Modifier
+                .height(32.dp)
+                .width(56.dp)
+                .drawBehind {
+                    val progress = indicatorProgress
+                    if (progress > 0.01f) {
+                        val widthPx = 24.dp.toPx() + 32.dp.toPx() * progress
+                        drawRoundRect(
+                            color = indicatorColor.copy(alpha = progress),
+                            size = Size(widthPx, size.height),
+                            topLeft = Offset((size.width - widthPx) / 2f, 0f),
+                            cornerRadius = CornerRadius(size.height / 2f),
+                        )
+                    }
+                },
             contentAlignment = Alignment.Center,
         ) {
-            Surface(
-                modifier = Modifier.size(width = 24.dp + 32.dp * indicatorWidth, height = 32.dp),
-                shape = RoundedCornerShape(16.dp),
-                color = if (selected) {
-                    MaterialTheme.colorScheme.secondaryContainer
-                } else {
-                    Color.Transparent
+            Box(
+                modifier = Modifier.graphicsLayer {
+                    scaleX = iconScale
+                    scaleY = iconScale
                 },
-                tonalElevation = 0.dp,
-            ) {}
-            Box(modifier = Modifier.scale(iconScale)) {
+            ) {
                 Icon(
                     painter = options.icon!!,
                     contentDescription = options.title,
-                    tint = if (selected) {
-                        MaterialTheme.colorScheme.onSecondaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
+                    tint = iconTint,
                     modifier = Modifier.size(24.dp),
                 )
                 Box(
@@ -195,11 +205,7 @@ private fun RowScope.ExpressiveNavigationItem(
         Text(
             text = options.title,
             modifier = Modifier.padding(top = 2.dp),
-            color = if (selected) {
-                MaterialTheme.colorScheme.secondary
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
+            color = labelColor,
             style = MaterialTheme.typography.labelSmall,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
             maxLines = 1,

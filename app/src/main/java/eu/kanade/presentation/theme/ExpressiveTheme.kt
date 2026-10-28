@@ -7,18 +7,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * Corner scale used across Kedr Mihon.
- *
- * Material 3 Expressive widens the corner scale and encourages pairing a large outer
- * radius with a smaller inner one. The five [Shapes] slots are mapped to that scale:
- *
- * - extraSmall  -> 8dp  (badges, tiny chips)
- * - small       -> 12dp (inputs, compact controls)
- * - medium      -> 16dp (list rows, small cards)
- * - large       -> 24dp (content cards, menus)
- * - extraLarge  -> 32dp (sheets, hero containers, floating navigation)
- */
 val ExpressiveShapes = Shapes(
     extraSmall = RoundedCornerShape(8.dp),
     small = RoundedCornerShape(12.dp),
@@ -27,13 +15,6 @@ val ExpressiveShapes = Shapes(
     extraLarge = RoundedCornerShape(32.dp),
 )
 
-/**
- * Typography with a heavier, tighter display/headline scale.
- *
- * Body styles stay at the Material baselines for readability; the expressive part of the
- * scale carries the hierarchy. Emphasized styles are selected per component instead of
- * replacing the whole scale.
- */
 val ExpressiveTypography: Typography = Typography().let { base ->
     base.copy(
         displayLarge = base.displayLarge.copy(

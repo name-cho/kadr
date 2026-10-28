@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_tagline">Читалка манги</string>
     <string name="action_add">Добавить</string>
     <string name="action_add_category">Добавить категорию</string>
     <string name="action_bookmark">Добавить закладку</string>
@@ -309,7 +310,7 @@
     <string name="notification_chapters_single_and_more">Глава %1$s и ещё %2$d</string>
     <string name="notification_chapters_multiple">Главы %1$s</string>
     <string name="notification_chapters_single">Глава %1$s</string>
-    <string name="pref_category_display">Отображение</string>
+    <string name="pref_category_display">Интерфейс</string>
     <string name="updating_library">Обновление библиотеки</string>
     <string name="battery_optimization_disabled">Оптимизация батареи уже выключена</string>
     <string name="pref_disable_battery_optimization_summary">Помогает с обновлением библиотеки и резервной копией в фоне</string>

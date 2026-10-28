@@ -1,4 +1,4 @@
-package eu.kanade.presentation.more.settings.widget
+﻿package eu.kanade.presentation.more.settings.widget
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.RepeatMode
@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,9 +52,8 @@ internal fun BasePreferenceWidget(
     val minHeight = LocalPreferenceMinHeight.current
     Row(
         modifier = modifier
-            .padding(horizontal = 12.dp, vertical = 2.dp)
-            .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .clip(MaterialTheme.shapes.large)
+            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
             .highlightBackground(highlighted)
             .sizeIn(minHeight = minHeight)
             .clickable(enabled = enabled && onClick != null, onClick = { onClick?.invoke() })
@@ -126,7 +126,7 @@ internal fun Modifier.highlightBackground(highlighted: Boolean): Modifier {
         },
         label = "highlight",
     )
-    return this.background(color = highlight)
+    return this.drawBehind { drawRect(highlight) }
 }
 
 internal val TrailingWidgetBuffer = 16.dp

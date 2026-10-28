@@ -19,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import eu.kanade.tachiyomi.R
+import tachiyomi.i18n.MR
+import tachiyomi.presentation.core.components.expressiveBackdrop
+import tachiyomi.presentation.core.i18n.stringResource
 
 @Composable
 fun LogoHeader(
@@ -32,38 +35,48 @@ fun LogoHeader(
         color = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
     ) {
-        Row(
-            modifier = Modifier.padding(iconPadding).padding(horizontal = 20.dp, vertical = 22.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Surface(
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
+        Box {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .expressiveBackdrop(
+                        shapeColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        accentColor = MaterialTheme.colorScheme.primary,
+                    ),
+            )
+            Row(
+                modifier = Modifier.padding(iconPadding).padding(horizontal = 20.dp, vertical = 22.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Box(
-                    modifier = Modifier.padding(12.dp),
-                    contentAlignment = Alignment.Center,
+                Surface(
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_mihon),
-                        contentDescription = null,
-                        modifier = Modifier.size(40.dp),
+                    Box(
+                        modifier = Modifier.padding(12.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_kadr),
+                            contentDescription = null,
+                            modifier = Modifier.size(40.dp),
+                        )
+                    }
+                }
+                Column {
+                    Text(
+                        text = stringResource(MR.strings.app_name),
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    )
+                    Text(
+                        text = stringResource(MR.strings.app_tagline),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.72f),
                     )
                 }
-            }
-            Column {
-                Text(
-                    text = "Mihon",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
-                )
-                Text(
-                    text = "Material You Expressive",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.72f),
-                )
             }
         }
     }

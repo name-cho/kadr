@@ -26,8 +26,6 @@ internal fun LibraryTabs(
 ) {
     val currentPageIndex = pagerState.currentPage.coerceAtMost(categories.lastIndex)
 
-    // A floating tonal island keeps the category switcher visually detached from the
-    // scrolling grid, matching the expressive tab surfaces used elsewhere in the app.
     Box(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 6.dp)

@@ -36,13 +36,7 @@ class AppUpdateChecker(
     }
 }
 
-val GITHUB_REPO: String by lazy {
-    if (isNightlyBuildType) {
-        "mihonapp/mihon-preview"
-    } else {
-        "mihonapp/mihon"
-    }
-}
+const val GITHUB_REPO = "name-cho/kadr"
 
 val RELEASE_TAG: String by lazy {
     if (isNightlyBuildType) {

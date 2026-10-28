@@ -3,7 +3,6 @@ package eu.kanade.presentation.more.settings.widget
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -11,6 +10,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import eu.kanade.presentation.theme.TachiyomiPreviewTheme
 import mihon.icons.materialsymbols.MaterialSymbols
 import mihon.icons.materialsymbols.rounded.Preview
+import tachiyomi.presentation.core.components.ExpressiveSwitch
 
 @Composable
 fun SwitchPreferenceWidget(
@@ -28,9 +28,9 @@ fun SwitchPreferenceWidget(
         subtitle = subtitle,
         icon = icon,
         widget = {
-            Switch(
+            ExpressiveSwitch(
                 checked = checked,
-                onCheckedChange = null,
+                onCheckedChange = onCheckedChanged,
                 enabled = enabled,
                 modifier = Modifier.padding(start = TrailingWidgetBuffer),
             )

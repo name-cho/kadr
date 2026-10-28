@@ -1,9 +1,11 @@
-package eu.kanade.presentation.util
+﻿package eu.kanade.presentation.util
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.ContentTransform
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -60,10 +62,12 @@ fun ScreenTransition(
     modifier: Modifier = Modifier,
     content: ScreenTransitionContent = { it.Content() },
 ) {
+    val backState = rememberNavigationEventState(currentInfo = NavigationEventInfo.None)
+
     AnimatedContent(
         targetState = navigator.lastItem,
         transitionSpec = transition,
-        modifier = modifier,
+        modifier = modifier.predictiveBackAnimation(backState),
         label = "transition",
     ) { screen ->
         navigator.saveableState("transition", screen) {
@@ -71,5 +75,9 @@ fun ScreenTransition(
         }
     }
 
-    BackHandler(enabled = navigator.canPop, onBack = navigator::pop)
+    NavigationBackHandler(
+        state = backState,
+        isBackEnabled = navigator.canPop,
+        onBackCompleted = navigator::pop,
+    )
 }

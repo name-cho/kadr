@@ -21,8 +21,6 @@ fun BaseBrowseItem(
     action: @Composable RowScope.() -> Unit = {},
     content: @Composable RowScope.() -> Unit = {},
 ) {
-    // Each browse row is its own tonal island so lists read as a stack of cards
-    // instead of a flat, divider-heavy table.
     Row(
         modifier = modifier
             .padding(horizontal = 12.dp, vertical = 3.dp)
