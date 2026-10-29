@@ -65,22 +65,31 @@ fun ExpressiveNavigationBar(
         enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }) + scaleIn(initialScale = 0.92f),
         exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 }) + scaleOut(targetScale = 0.92f),
     ) {
-        Row(
+        Surface(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp)
-                .height(72.dp)
-                .padding(horizontal = 6.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(28.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            tonalElevation = 0.dp,
+            shadowElevation = 8.dp,
         ) {
-            tabs.fastForEachIndexed { index, tab ->
-                ExpressiveNavigationItem(
-                    tab = tab,
-                    selected = selectedTab::class == tab::class,
-                    onClick = { onSelect(tab) },
-                    badge = { badge(tab) },
-                )
+            Row(
+                modifier = Modifier
+                    .height(72.dp)
+                    .padding(horizontal = 6.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                tabs.fastForEachIndexed { index, tab ->
+                    ExpressiveNavigationItem(
+                        tab = tab,
+                        selected = selectedTab::class == tab::class,
+                        onClick = { onSelect(tab) },
+                        badge = { badge(tab) },
+                    )
+                }
             }
         }
     }
@@ -126,12 +135,10 @@ private fun RowScope.ExpressiveNavigationItem(
     Column(
         modifier = Modifier
             .weight(1f)
-            .height(60.dp)
             .graphicsLayer {
                 scaleX = itemScale
                 scaleY = itemScale
             }
-            .clip(RoundedCornerShape(24.dp))
             .selectable(
                 selected = selected,
                 interactionSource = interactionSource,
@@ -142,7 +149,7 @@ private fun RowScope.ExpressiveNavigationItem(
                     onClick()
                 },
             )
-            .padding(vertical = 4.dp),
+            .padding(vertical = 2.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

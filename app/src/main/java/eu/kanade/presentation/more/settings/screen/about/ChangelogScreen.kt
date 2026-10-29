@@ -21,9 +21,9 @@ import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.manga.components.MarkdownRender
 import eu.kanade.presentation.more.LogoHeader
 import eu.kanade.presentation.util.Screen
-import mihon.app.di.appGraph
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import mihon.app.di.appGraph
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.ScrollbarLazyColumn
