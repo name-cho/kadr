@@ -65,29 +65,22 @@ fun ExpressiveNavigationBar(
         enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }) + scaleIn(initialScale = 0.92f),
         exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 }) + scaleOut(targetScale = 0.92f),
     ) {
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            contentColor = MaterialTheme.colorScheme.onSurface,
-            tonalElevation = 0.dp,
-            shadowElevation = 0.dp,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 10.dp)
+                .height(72.dp)
+                .padding(horizontal = 6.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = Modifier
-                    .height(72.dp)
-                    .padding(horizontal = 6.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                tabs.fastForEachIndexed { index, tab ->
-                    ExpressiveNavigationItem(
-                        tab = tab,
-                        selected = selectedTab::class == tab::class,
-                        onClick = { onSelect(tab) },
-                        badge = { badge(tab) },
-                    )
-                }
+            tabs.fastForEachIndexed { index, tab ->
+                ExpressiveNavigationItem(
+                    tab = tab,
+                    selected = selectedTab::class == tab::class,
+                    onClick = { onSelect(tab) },
+                    badge = { badge(tab) },
+                )
             }
         }
     }
