@@ -1,0 +1,39 @@
+# GitLab CI for Kadr (gitgud.io/name-cho/kadr)
+# Builds a release APK on tags and keeps it as a CI artifact.
+
+image: eclipse-temurin:21-jdk
+
+stages:
+  - build
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.jvmargs=-Xmx3g -Dorg.gradle.daemon=false"
+  ANDROID_SDK_ROOT: "/opt/android-sdk"
+  ANDROID_HOME: "/opt/android-sdk"
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+    - .gradle/caches
+    - .gradle/wrapper
+
+release:
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - apt-get update -y
+    - apt-get install -y --no-install-recommends unzip
+    - mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
+    - cd $ANDROID_SDK_ROOT/cmdline-tools
+    - curl -sSL -o cmdtools.zip "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+    - unzip -q cmdtools.zip
+    - mv cmdline-tools latest
+    - cd $CI_PROJECT_DIR
+    - yes | sdkmanager --licenses > /dev/null 2>&1 || true
+    - sdkmanager "platform-tools" "platforms;android-36" > /dev/null 2>&1
+    - ./gradlew assembleRelease -Pdist=ci
+  artifacts:
+    paths:
+      - app/build/outputs/apk/release/*.apk
+    expire_in: 90 days

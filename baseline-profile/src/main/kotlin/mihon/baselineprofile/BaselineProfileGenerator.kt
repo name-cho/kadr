@@ -24,6 +24,18 @@ class BaselineProfileGenerator {
             pressHome()
             startActivityAndWait()
 
+            // Library: exercise the cover grid scroll path (the most perf-critical screen)
+            device.waitAndClick(By.text("Library"))
+            device.waitForIdle()
+            repeat(3) {
+                device.swipe(540, 1000, 540, 400, 50)
+                device.waitForIdle()
+            }
+            repeat(2) {
+                device.swipe(540, 400, 540, 1000, 50)
+                device.waitForIdle()
+            }
+
             device.waitAndClick(By.text("Updates"))
             device.waitForIdle()
 

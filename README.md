@@ -46,12 +46,23 @@ Android Studio's bundled JBR works) and:
 
 # Release (minified, resources shrunk)
 ./gradlew :app:assembleRelease
+
+# Release with the in-app updater enabled (checks GitHub releases)
+./gradlew :app:assembleRelease -Pdist=github
 ```
 
 The debug build id is `app.kadr.dev`, release is `app.kadr`.
 A debug keystore is configured through `keystore.properties` at the project
 root (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`) — see
 `app/build.gradle.kts`.
+
+## Continuous integration
+
+- **GitHub Actions** (`.github/workflows/`): `release.yml` builds a release
+  APK and creates a GitHub release on tags `v*`; `build.yml` builds and tests
+  on pushes to `expressive-ui`.
+- **GitLab CI** (`.gitlab-ci.yml`): builds a release APK on tags, kept as a
+  CI artifact (for gitgud.io).
 
 ## Performance notes
 

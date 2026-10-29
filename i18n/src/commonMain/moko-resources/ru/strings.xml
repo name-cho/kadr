@@ -81,6 +81,7 @@
     <string name="file_select_cover">Выбрать обложку</string>
     <string name="fourth_to_last">Четвёртая от прочитанной главы</string>
     <string name="information_empty_library">Ваша библиотека пуста</string>
+    <string name="no_changelog">Нет описания изменений для этой версии.</string>
     <string name="information_no_downloads">Нет загрузок</string>
     <string name="information_no_recent">Нет новых обновлений</string>
     <string name="information_no_recent_manga">Ничего не прочитано в последнее время</string>
