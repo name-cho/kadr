@@ -25,7 +25,6 @@ import mihon.app.di.appGraph
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.intellij.markdown.flavours.gfm.GFMFlavourDescriptor
-import tachiyomi.domain.release.interactor.GetApplicationRelease
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.ScrollbarLazyColumn
 import tachiyomi.presentation.core.components.material.Scaffold
@@ -44,8 +43,7 @@ object ChangelogScreen : Screen() {
 
         LaunchedEffect(Unit) {
             changelogInfo = withContext(Dispatchers.IO) {
-                val result = context.appGraph.updateChecker.checkForUpdate(forceCheck = false)
-                (result as? GetApplicationRelease.Result.NewUpdate)?.release?.info
+                context.appGraph.updateChecker.getReleaseNotes()
             }
         }
 

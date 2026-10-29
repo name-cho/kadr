@@ -34,6 +34,24 @@ class AppUpdateChecker(
             result
         }
     }
+
+    /**
+     * Fetches the latest release notes without gating on whether the version is newer
+     * than the installed one. Used by the in-app changelog.
+     */
+    suspend fun getReleaseNotes(): String {
+        return withContext(Dispatchers.IO) {
+            getApplicationRelease.latestNow(
+                GetApplicationRelease.Arguments(
+                    isFossBuildType,
+                    isNightlyBuildType,
+                    BuildConfig.COMMIT_COUNT.toInt(),
+                    BuildConfig.VERSION_NAME,
+                    GITHUB_REPO,
+                ),
+            )?.info.orEmpty()
+        }
+    }
 }
 
 const val GITHUB_REPO = "name-cho/kadr"

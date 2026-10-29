@@ -66,18 +66,12 @@ fun ExpressiveNavigationBar(
         exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 }) + scaleOut(targetScale = 0.92f),
     ) {
         Surface(
-            modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 10.dp)
-                .fillMaxWidth(),
-            shape = RoundedCornerShape(32.dp),
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             contentColor = MaterialTheme.colorScheme.onSurface,
             tonalElevation = 0.dp,
-            shadowElevation = 6.dp,
-            border = BorderStroke(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
-            ),
+            shadowElevation = 0.dp,
         ) {
             Row(
                 modifier = Modifier

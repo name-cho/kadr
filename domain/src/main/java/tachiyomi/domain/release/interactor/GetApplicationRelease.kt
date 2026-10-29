@@ -24,6 +24,15 @@ class GetApplicationRelease(
         }
     }
 
+    /**
+     * Returns the latest released [Release] regardless of whether it is newer
+     * than the installed version. Used to show release notes (changelog) even
+     * when the app is up to date.
+     */
+    suspend fun latestNow(arguments: Arguments): Release? {
+        return service.latest(arguments)
+    }
+
     private fun isNewVersion(
         isNightly: Boolean,
         commitCount: Int,
