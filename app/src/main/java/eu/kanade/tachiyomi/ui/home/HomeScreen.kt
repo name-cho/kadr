@@ -213,11 +213,13 @@ object HomeScreen : Screen() {
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                     if (source == NestedScrollSource.UserInput && available.y != 0f) {
-                        accumulated += available.y
+                        // In this API, scrolling DOWN through the list (finger moving
+                        // up, content moving up) reports a negative dy. Hide on that.
+                        accumulated += -available.y
                         if (accumulated > ScrollHideThresholdPx) {
-                            onScrollDirectionChanged(true)
-                        } else if (accumulated < -12) {
-                            onScrollDirectionChanged(false)
+                            onScrollDirectionChanged(true) // scrolled down → hide
+                        } else if (accumulated < -12f) {
+                            onScrollDirectionChanged(false) // scrolled up → show
                         }
                     }
                     return Offset.Zero
