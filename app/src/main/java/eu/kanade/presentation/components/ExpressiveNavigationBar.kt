@@ -1,4 +1,4 @@
-package eu.kanade.presentation.components
+﻿package eu.kanade.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -67,13 +67,17 @@ fun ExpressiveNavigationBar(
     ) {
         Surface(
             modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .padding(horizontal = 12.dp, vertical = 10.dp)
                 .fillMaxWidth(),
-            shape = RoundedCornerShape(28.dp),
+            shape = RoundedCornerShape(32.dp),
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             contentColor = MaterialTheme.colorScheme.onSurface,
             tonalElevation = 0.dp,
-            shadowElevation = 8.dp,
+            shadowElevation = 6.dp,
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+            ),
         ) {
             Row(
                 modifier = Modifier
@@ -135,10 +139,12 @@ private fun RowScope.ExpressiveNavigationItem(
     Column(
         modifier = Modifier
             .weight(1f)
+            .height(60.dp)
             .graphicsLayer {
                 scaleX = itemScale
                 scaleY = itemScale
             }
+            .clip(RoundedCornerShape(24.dp))
             .selectable(
                 selected = selected,
                 interactionSource = interactionSource,
@@ -149,7 +155,7 @@ private fun RowScope.ExpressiveNavigationItem(
                     onClick()
                 },
             )
-            .padding(vertical = 2.dp),
+            .padding(vertical = 4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
