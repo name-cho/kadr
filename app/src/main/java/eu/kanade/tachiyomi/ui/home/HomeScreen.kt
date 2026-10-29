@@ -28,7 +28,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -139,6 +143,9 @@ object HomeScreen : Screen() {
                     ) { contentPadding ->
                         TabContent(
                             tabNavigator = tabNavigator,
+                            onScrollDirectionChanged = { scrolledDown ->
+                                showBottomNav = !scrolledDown
+                            },
                         )
                     }
                 }
@@ -191,10 +198,21 @@ object HomeScreen : Screen() {
     private fun TabContent(
         tabNavigator: TabNavigator,
         modifier: Modifier = Modifier,
+        onScrollDirectionChanged: (scrolledDown: Boolean) -> Unit = {},
     ) {
+        val nestedScrollConnection = remember {
+            object : NestedScrollConnection {
+                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                    if (source == NestedScrollSource.UserInput && available.y != 0f) {
+                        onScrollDirectionChanged(available.y > 0f)
+                    }
+                    return Offset.Zero
+                }
+            }
+        }
         AnimatedContent(
             targetState = tabNavigator.current,
-            modifier = modifier,
+            modifier = modifier.nestedScroll(nestedScrollConnection),
             transitionSpec = {
                 (
                     fadeIn(animationSpec = tween(durationMillis = 220)) +

@@ -34,24 +34,33 @@ enum class MangaCover(val ratio: Float) {
         shape: Shape = MaterialTheme.shapes.medium,
         onClick: (() -> Unit)? = null,
     ) {
-        // Cap the decoded resolution so grid covers aren't decoded at full file size
-        // before being cropped down to display size — saves memory and decode time
-        // on low-RAM devices.
-        val context = LocalContext.current
-        val density = LocalDensity.current
-        val request = remember(data) {
-            ImageRequest.Builder(context)
-                .data(data)
-                .size(
-                    Size(
-                        with(density) { MaxCoverSizeDp.roundToPx() },
-                        with(density) { MaxCoverSizeDp.roundToPx() },
-                    ),
-                )
-                .build()
-        }
+        // MangaInfoHeader (and similar spots) pass a fully-built ImageRequest
+        // (e.g. `.data(manga).crossfade(true).build()`). Wrapping it in another
+        // ImageRequest here would make Coil treat the request itself as the data
+        // payload, so the Manga/MangaCover fetcher would never match and the
+        // cover wouldn't load. Pass ready-made requests through untouched.
+        val model: Any =
+            if (data is ImageRequest) {
+                data
+            } else {
+                // Cap the decoded resolution so grid covers aren't decoded at
+                // full file size before being cropped to display size.
+                val context = LocalContext.current
+                val density = LocalDensity.current
+                remember(data) {
+                    ImageRequest.Builder(context)
+                        .data(data)
+                        .size(
+                            Size(
+                                with(density) { MaxCoverSizeDp.roundToPx() },
+                                with(density) { MaxCoverSizeDp.roundToPx() },
+                            ),
+                        )
+                        .build()
+                }
+            }
         AsyncImage(
-            model = request,
+            model = model,
             placeholder = ColorPainter(CoverPlaceholderColor),
             error = rememberResourceBitmapPainter(id = R.drawable.cover_error),
             contentDescription = contentDescription,
