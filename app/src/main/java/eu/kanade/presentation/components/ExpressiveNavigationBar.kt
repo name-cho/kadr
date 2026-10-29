@@ -116,15 +116,13 @@ private fun RowScope.ExpressiveNavigationItem(
         animationSpec = spring(dampingRatio = 0.55f, stiffness = 900f),
         label = "navItemScale",
     )
-    // One spring animation per tab drives both the indicator and the icon scale,
-    // instead of three independent springs per item.
-    val activeProgress by animateFloatAsState(
+    // One spring drives both the indicator and the icon scale. It is read in the
+    // draw phase so the animation never recomposes the item.
+    val activeProgress = animateFloatAsState(
         targetValue = if (selected) 1f else 0f,
         animationSpec = spring(dampingRatio = 0.62f, stiffness = 500f),
         label = "navActive",
     )
-    val indicatorProgress = activeProgress
-    val iconScale = 1f + 0.06f * activeProgress
 
     val indicatorColor = MaterialTheme.colorScheme.secondaryContainer
     val iconTint = if (selected) {
@@ -166,7 +164,7 @@ private fun RowScope.ExpressiveNavigationItem(
                 .height(32.dp)
                 .width(56.dp)
                 .drawBehind {
-                    val progress = indicatorProgress
+                    val progress = activeProgress.value
                     if (progress > 0.01f) {
                         val widthPx = 24.dp.toPx() + 32.dp.toPx() * progress
                         drawRoundRect(
@@ -181,8 +179,9 @@ private fun RowScope.ExpressiveNavigationItem(
         ) {
             Box(
                 modifier = Modifier.graphicsLayer {
-                    scaleX = iconScale
-                    scaleY = iconScale
+                    val progress = activeProgress.value
+                    scaleX = 1f + 0.06f * progress
+                    scaleY = 1f + 0.06f * progress
                 },
             ) {
                 Icon(

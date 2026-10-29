@@ -249,10 +249,10 @@ class App : Application(), DefaultLifecycleObserver, SingletonImageLoader.Factor
                     .build(),
             )
 
-            // Сетки обложек впихивают десятки вновь появляющихся изображений за кадр.
-            // На low-RAM девайсах crossfade на них — чистый проигрыш в кадрах.
+            // Cover grids can start dozens of image loads in one frame; crossfading
+            // all of them costs frames on low-RAM devices.
             if (!DeviceUtil.isLowRamDevice(this@App)) {
-                crossfade((150 * this@App.animatorDurationScale).toInt())
+                crossfade((300 * this@App.animatorDurationScale).toInt())
             }
             allowRgb565(DeviceUtil.isLowRamDevice(this@App))
             if (networkPreferences.verboseLogging.get()) logger(DebugLogger())

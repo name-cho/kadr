@@ -1,4 +1,4 @@
-﻿package eu.kanade.presentation.util
+package eu.kanade.presentation.util
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer

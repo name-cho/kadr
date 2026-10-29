@@ -1,14 +1,14 @@
-﻿package eu.kanade.presentation.more.settings.screen
+package eu.kanade.presentation.more.settings.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarDefaults
@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
@@ -122,7 +123,6 @@ object SettingsMainScreen : Screen() {
                 LazyColumn(
                     state = state,
                     contentPadding = contentPadding,
-                    verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     itemsIndexed(
                         items = items,
@@ -140,13 +140,26 @@ object SettingsMainScreen : Screen() {
                         } else {
                             MaterialTheme.colorScheme.surfaceContainerHigh
                         }
+                        val shape = when {
+                            items.size == 1 -> RoundedCornerShape(24.dp)
+                            index == 0 -> RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                            index == items.lastIndex ->
+                                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                            else -> RectangleShape
+                        }
 
                         Column(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp)
-                                .clip(RoundedCornerShape(24.dp))
+                                .clip(shape)
                                 .background(cardColor),
                         ) {
+                            if (index > 0) {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f),
+                                )
+                            }
                             CompositionLocalProvider(LocalContentColor provides contentColor) {
                                 TextPreferenceWidget(
                                     title = stringResource(item.titleRes),

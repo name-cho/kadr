@@ -1,4 +1,4 @@
-﻿package eu.kanade.presentation.browse.components
+package eu.kanade.presentation.browse.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn

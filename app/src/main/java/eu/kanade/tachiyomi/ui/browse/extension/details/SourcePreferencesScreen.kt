@@ -53,6 +53,8 @@ import eu.kanade.presentation.more.settings.widget.ListPreferenceDialog
 import eu.kanade.presentation.more.settings.widget.MultiSelectListPreferenceDialog
 import eu.kanade.presentation.more.settings.widget.PreferenceDialogMessage
 import eu.kanade.presentation.more.settings.widget.PreferenceGroupHeader
+import eu.kanade.presentation.more.settings.widget.SettingsGroup
+import eu.kanade.presentation.more.settings.widget.SettingsGroupDivider
 import eu.kanade.presentation.more.settings.widget.SwitchPreferenceWidget
 import eu.kanade.presentation.more.settings.widget.TextPreferenceWidget
 import eu.kanade.presentation.util.Screen
@@ -110,8 +112,23 @@ class SourcePreferencesScreen(val sourceId: Long) : Screen() {
             },
         ) { contentPadding ->
             val items = remember(preferenceScreen.version) { preferenceScreen.items() }
+            val sections = remember(items) { items.toSections() }
             ScrollbarLazyColumn(contentPadding = contentPadding) {
-                items(items) { PreferenceRow(it) }
+                items(sections) { section ->
+                    Column {
+                        section.title?.let { PreferenceGroupHeader(title = it) }
+                        if (section.items.isNotEmpty()) {
+                            SettingsGroup {
+                                section.items.forEachIndexed { index, item ->
+                                    if (index > 0) {
+                                        SettingsGroupDivider()
+                                    }
+                                    PreferenceRow(item)
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -217,13 +234,47 @@ private data class PreferenceItem(
     }
 }
 
+private data class PreferenceSection(
+    val title: String?,
+    val items: List<PreferenceItem>,
+)
+
+/**
+ * Splits the flat preference list into cards: a group becomes the card's title and everything
+ * after it belongs to that card until the next group.
+ */
+private fun List<PreferenceItem>.toSections(): List<PreferenceSection> {
+    val sections = mutableListOf<PreferenceSection>()
+    var title: String? = null
+    val run = mutableListOf<PreferenceItem>()
+
+    fun flush() {
+        if (run.isNotEmpty()) {
+            sections += PreferenceSection(title, run.toList())
+            run.clear()
+            title = null
+        }
+    }
+
+    forEach { item ->
+        if (item.preference is PreferenceGroup) {
+            flush()
+            title = item.title
+        } else {
+            run += item
+        }
+    }
+    flush()
+
+    return sections
+}
+
 @SuppressLint("RestrictedApi")
 @Composable
 private fun PreferenceRow(item: PreferenceItem) {
     val preference = item.preference
     val onClick = if (preference.isSelectable) preference::performClick else null
     when {
-        preference is PreferenceGroup -> PreferenceGroupHeader(title = item.title.orEmpty())
         preference is CheckBoxPreference -> CheckboxPreferenceWidget(
             title = item.title.orEmpty(),
             subtitle = item.summary,

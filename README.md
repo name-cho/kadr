@@ -21,8 +21,8 @@ presentation layer:
 - **Floating navigation bar** — a pill-shaped bar with an animated indicator
   on the active tab only, instead of a static bottom bar
   (`ExpressiveNavigationBar.kt`).
-- **Redesigned settings** — preference rows are rendered as separate rounded
-  chips with real gaps instead of one flat list with dividers
+- **Redesigned settings** — preferences are grouped into rounded cards with
+  section labels and thin dividers, the way Telegram-style clients do it
   (`presentation/more/settings/widget`).
 - **Hero backdrop shapes** — decorative shapes drawn behind the header of the
   "More" screen via `drawWithCache` (computed once per size, no per-frame
