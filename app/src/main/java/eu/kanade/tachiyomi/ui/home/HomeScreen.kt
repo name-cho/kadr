@@ -34,6 +34,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -75,6 +76,10 @@ object HomeScreen : Screen() {
 
     @Suppress("ConstPropertyName")
     private const val TabNavigatorKey = "HomeTabs"
+
+    // Minimum downward scroll (px) before the navbar auto-hides, so flicks/taps
+    // and tiny scroll jitters don't collapse it.
+    private const val ScrollHideThresholdPx = 160f
 
     private val TABS = listOf(
         LibraryTab,
@@ -201,12 +206,28 @@ object HomeScreen : Screen() {
         onScrollDirectionChanged: (scrolledDown: Boolean) -> Unit = {},
     ) {
         val nestedScrollConnection = remember {
+            // Accumulate vertical scroll so flicks/taps and sub-threshold motion
+            // don't hide the bar; only a deliberate downward scroll of at least
+            // threshold hides it, and any upward scroll shows it again.
+            var accumulated by androidx.compose.runtime.mutableFloatStateOf(0f)
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                     if (source == NestedScrollSource.UserInput && available.y != 0f) {
-                        onScrollDirectionChanged(available.y > 0f)
+                        accumulated += available.y
+                        if (accumulated > ScrollHideThresholdPx) {
+                            onScrollDirectionChanged(true)
+                        } else if (accumulated < -12) {
+                            onScrollDirectionChanged(false)
+                        }
                     }
                     return Offset.Zero
+                }
+                override suspend fun onPreFling(available: Velocity): Velocity {
+                    // A downward fling is clearly intentional — hide immediately.
+                    if (available.y > 0f) {
+                        onScrollDirectionChanged(true)
+                    }
+                    return Velocity.Zero
                 }
             }
         }
