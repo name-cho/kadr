@@ -3,12 +3,11 @@ package eu.kanade.presentation.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -62,8 +61,10 @@ fun ExpressiveNavigationBar(
     AnimatedVisibility(
         visible = visible,
         modifier = modifier.navigationBarsPadding(),
-        enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }) + scaleIn(initialScale = 0.92f),
-        exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 2 }) + scaleOut(targetScale = 0.92f),
+        enter = fadeIn(tween(durationMillis = 160)) +
+            expandVertically(expandFrom = Alignment.Bottom, animationSpec = tween(durationMillis = 240)),
+        exit = fadeOut(tween(durationMillis = 120)) +
+            shrinkVertically(shrinkTowards = Alignment.Bottom, animationSpec = tween(durationMillis = 200)),
     ) {
         Surface(
             modifier = Modifier

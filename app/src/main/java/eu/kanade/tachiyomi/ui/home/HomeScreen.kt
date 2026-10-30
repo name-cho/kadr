@@ -26,13 +26,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.util.fastForEach
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
@@ -91,6 +97,9 @@ object HomeScreen : Screen() {
             CompositionLocalProvider(LocalNavigator provides navigator) {
                 val tabletUi = isTabletUi()
                 var showBottomNav by remember { mutableStateOf(true) }
+                // While a screen pins the bar (e.g. selection mode), scroll direction
+                // must not override its visibility.
+                var navBarPinned by remember { mutableStateOf(false) }
                 val tabScope = rememberCoroutineScope()
 
                 LaunchedEffect(tabletUi) {
@@ -99,6 +108,7 @@ object HomeScreen : Screen() {
                         return@LaunchedEffect
                     }
                     showBottomNavEvent.receiveAsFlow().collectLatest { show ->
+                        navBarPinned = !show
                         showBottomNav = show
                     }
                 }
@@ -140,6 +150,11 @@ object HomeScreen : Screen() {
                         TabContent(
                             tabNavigator = tabNavigator,
                             modifier = Modifier.padding(bottom = contentPadding.calculateBottomPadding()),
+                            onScrollDirectionChanged = { scrolledDown ->
+                                if (!navBarPinned) {
+                                    showBottomNav = !scrolledDown
+                                }
+                            },
                         )
                     }
                 }
@@ -192,10 +207,25 @@ object HomeScreen : Screen() {
     private fun TabContent(
         tabNavigator: TabNavigator,
         modifier: Modifier = Modifier,
+        onScrollDirectionChanged: (scrolledDown: Boolean) -> Unit = {},
     ) {
+        val scrollHandler = rememberUpdatedState(onScrollDirectionChanged)
+        val scrollConnection = remember {
+            NavBarScrollConnection(
+                onHide = { scrollHandler.value(true) },
+                onShow = { scrollHandler.value(false) },
+            )
+        }
+
+        // A new tab starts at the top, so the bar always comes back with it.
+        LaunchedEffect(tabNavigator.current) {
+            scrollConnection.reset()
+            scrollHandler.value(false)
+        }
+
         AnimatedContent(
             targetState = tabNavigator.current,
-            modifier = modifier,
+            modifier = modifier.nestedScroll(scrollConnection),
             transitionSpec = {
                 (
                     fadeIn(animationSpec = tween(durationMillis = 220)) +
@@ -320,5 +350,67 @@ object HomeScreen : Screen() {
         data object History : Tab
         data class Browse(val toExtensions: Boolean = false) : Tab
         data class More(val toDownloads: Boolean) : Tab
+    }
+}
+
+// How far the content has to be dragged up before the bar hides. Keeps taps,
+// tiny scrolls and overscroll bounces from collapsing it.
+private const val NAV_BAR_HIDE_THRESHOLD_PX = 140f
+private const val NAV_BAR_HIDE_FLING_VELOCITY = 1_500f
+
+/**
+ * Hides the navigation bar as soon as the content is dragged up (reading
+ * further) and brings it back on the first downward drag.
+ *
+ * Compose reports the finger delta: dragging the content up reports a negative
+ * `y`, dragging it back down reports a positive `y`.
+ */
+private class NavBarScrollConnection(
+    private val onHide: () -> Unit,
+    private val onShow: () -> Unit,
+) : NestedScrollConnection {
+    private var accumulatedDown = 0f
+    private var hidden = false
+
+    fun reset() {
+        accumulatedDown = 0f
+        hidden = false
+    }
+
+    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        if (source != NestedScrollSource.UserInput) return Offset.Zero
+
+        val dy = available.y
+        when {
+            dy < 0f -> {
+                accumulatedDown = (accumulatedDown - dy).coerceAtMost(NAV_BAR_HIDE_THRESHOLD_PX)
+                if (!hidden && accumulatedDown >= NAV_BAR_HIDE_THRESHOLD_PX) {
+                    hidden = true
+                    onHide()
+                }
+            }
+            dy > 0f -> {
+                accumulatedDown = 0f
+                if (hidden) {
+                    hidden = false
+                    onShow()
+                }
+            }
+        }
+        return Offset.Zero
+    }
+
+    override suspend fun onPreFling(available: Velocity): Velocity {
+        when {
+            available.y <= -NAV_BAR_HIDE_FLING_VELOCITY && !hidden -> {
+                hidden = true
+                onHide()
+            }
+            available.y >= NAV_BAR_HIDE_FLING_VELOCITY && hidden -> {
+                hidden = false
+                onShow()
+            }
+        }
+        return Velocity.Zero
     }
 }
