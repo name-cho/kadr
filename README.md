@@ -69,8 +69,8 @@ root (`storeFile`, `storePassword`, `keyAlias`, `keyPassword`) — see
 The project ships baseline profiles
 (`app/src/main/baselineProfiles`), R8 minification for release builds, and a
 Coil memory cache sized to the device. Grids and lists use stable keys and
-`@Immutable` models where applicable; large image grids disable crossfade to
-keep scrolling smooth on low-end devices.
+`@Immutable` models where applicable; image grids skip crossfade on low-RAM
+devices to keep scrolling smooth.
 
 ## License
 

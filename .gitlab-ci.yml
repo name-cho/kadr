@@ -23,15 +23,17 @@ release:
     - if: $CI_COMMIT_TAG
   script:
     - apt-get update -y
-    - apt-get install -y --no-install-recommends unzip
-    - mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
-    - cd $ANDROID_SDK_ROOT/cmdline-tools
-    - curl -sSL -o cmdtools.zip "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
-    - unzip -q cmdtools.zip
-    - mv cmdline-tools latest
-    - cd $CI_PROJECT_DIR
+    - apt-get install -y --no-install-recommends curl unzip
+    - |
+      if [ ! -x "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" ]; then
+        mkdir -p "$ANDROID_SDK_ROOT/cmdline-tools"
+        curl -sSL -o /tmp/cmdtools.zip "https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip"
+        unzip -q /tmp/cmdtools.zip -d "$ANDROID_SDK_ROOT/cmdline-tools"
+        mv "$ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools" "$ANDROID_SDK_ROOT/cmdline-tools/latest"
+      fi
+    - export PATH="$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools"
     - yes | sdkmanager --licenses > /dev/null 2>&1 || true
-    - sdkmanager "platform-tools" "platforms;android-36" > /dev/null 2>&1
+    - sdkmanager "platform-tools" "platforms;android-37.2" "build-tools;36.0.0"
     - ./gradlew assembleRelease -Pdist=ci
   artifacts:
     paths:
