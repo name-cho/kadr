@@ -9,7 +9,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -146,10 +145,9 @@ object HomeScreen : Screen() {
                                 badge = { tab -> tabBadge(tab)?.invoke() },
                             )
                         },
-                    ) { contentPadding ->
+                    ) { _ ->
                         TabContent(
                             tabNavigator = tabNavigator,
-                            modifier = Modifier.padding(bottom = contentPadding.calculateBottomPadding()),
                             onScrollDirectionChanged = { scrolledDown ->
                                 if (!navBarPinned) {
                                     showBottomNav = !scrolledDown

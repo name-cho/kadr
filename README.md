@@ -20,9 +20,9 @@ presentation layer:
   typography and shapes (`app/src/main/java/eu/kanade/presentation/theme`).
 - **Floating navigation bar** — a pill-shaped bar with an animated indicator
   on the active tab only, instead of a static bottom bar
-  (`ExpressiveNavigationBar.kt`). It collapses while you scroll down and comes
-  back on the first upward drag, driven by a `NestedScrollConnection` in
-  `HomeScreen.kt`.
+  (`ExpressiveNavigationBar.kt`). It floats over the content instead of
+  reserving space, collapses while you scroll down and comes back on the first
+  upward drag, driven by a `NestedScrollConnection` in `HomeScreen.kt`.
 - **Redesigned settings** — preferences are grouped into rounded cards with
   section labels and thin dividers, the way Telegram-style clients do it
   (`presentation/more/settings/widget`).
