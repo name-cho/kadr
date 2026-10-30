@@ -18,8 +18,8 @@ presentation layer:
 
 - **Material 3 Expressive theme** — expressive color scheme, updated
   typography and shapes (`app/src/main/java/eu/kanade/presentation/theme`).
-- **Floating navigation bar** — a transparent, borderless bar with an animated
-  pill behind the active tab's icon, instead of a static bottom bar
+- **Floating navigation bar** — a pill-shaped bar with an animated indicator
+  on the active tab only, instead of a static bottom bar
   (`ExpressiveNavigationBar.kt`). It collapses while you scroll down and comes
   back on the first upward drag, driven by a `NestedScrollConnection` in
   `HomeScreen.kt`.

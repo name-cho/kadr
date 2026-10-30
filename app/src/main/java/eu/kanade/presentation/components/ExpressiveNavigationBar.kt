@@ -8,6 +8,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -26,6 +27,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,22 +66,35 @@ fun ExpressiveNavigationBar(
         exit = fadeOut(tween(durationMillis = 120)) +
             shrinkVertically(shrinkTowards = Alignment.Bottom, animationSpec = tween(durationMillis = 200)),
     ) {
-        Row(
+        Surface(
             modifier = Modifier
                 .padding(horizontal = 12.dp, vertical = 10.dp)
-                .fillMaxWidth()
-                .height(72.dp)
-                .padding(horizontal = 6.dp, vertical = 6.dp),
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-            verticalAlignment = Alignment.CenterVertically,
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(32.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            tonalElevation = 0.dp,
+            shadowElevation = 6.dp,
+            border = BorderStroke(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f),
+            ),
         ) {
-            tabs.fastForEachIndexed { index, tab ->
-                ExpressiveNavigationItem(
-                    tab = tab,
-                    selected = selectedTab::class == tab::class,
-                    onClick = { onSelect(tab) },
-                    badge = { badge(tab) },
-                )
+            Row(
+                modifier = Modifier
+                    .height(72.dp)
+                    .padding(horizontal = 6.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                tabs.fastForEachIndexed { index, tab ->
+                    ExpressiveNavigationItem(
+                        tab = tab,
+                        selected = selectedTab::class == tab::class,
+                        onClick = { onSelect(tab) },
+                        badge = { badge(tab) },
+                    )
+                }
             }
         }
     }
