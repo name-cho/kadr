@@ -1,4 +1,4 @@
-﻿package eu.kanade.presentation.components
+package eu.kanade.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState

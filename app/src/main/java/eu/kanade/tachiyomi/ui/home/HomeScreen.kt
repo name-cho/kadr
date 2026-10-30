@@ -139,6 +139,7 @@ object HomeScreen : Screen() {
                     ) { contentPadding ->
                         TabContent(
                             tabNavigator = tabNavigator,
+                            modifier = Modifier.padding(bottom = contentPadding.calculateBottomPadding()),
                         )
                     }
                 }
